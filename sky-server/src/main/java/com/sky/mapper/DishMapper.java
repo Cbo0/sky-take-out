@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Select;
 public interface DishMapper {
 
     /**
-     * 根据分类id查询菜品数量
+     * Query the number of dishes according to the category id
      * @param categoryId
      * @return
      */
