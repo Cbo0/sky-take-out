@@ -40,7 +40,7 @@ public class CommonController {
         try {
             //Original file name
             String originalFilename = file.getOriginalFilename();
-            //截取原始文件名的后缀
+            //Intercept the suffix of the original file name
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
             String objectName = UUID.randomUUID().toString() + extension;
