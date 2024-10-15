@@ -103,4 +103,17 @@ public class DishController {
         List<Dish> list = dishService.list(categoryId);
         return Result.success(list);
     }
+
+    /**
+     * Starting or stoping dish
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("Starting or stoping dish")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        dishService.startOrStop(status, id);
+        return Result.success();
+    }
 }

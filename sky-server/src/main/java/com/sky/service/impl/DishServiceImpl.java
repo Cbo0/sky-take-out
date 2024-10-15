@@ -8,10 +8,12 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.Setmeal;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorsMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetMealDishMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +36,8 @@ public class DishServiceImpl implements DishService {
     private DishFlavorsMapper dishFlavorsMapper;
     @Autowired
     private SetMealDishMapper setMealDishMapper;
+    @Autowired
+    private SetmealMapper setmealMapper;
 
     /**
      * Add dish and flavor
@@ -155,5 +160,36 @@ public class DishServiceImpl implements DishService {
                 .status(StatusConstant.ENABLE)
                 .build();
         return dishMapper.list(dish);
+    }
+
+    /**
+     * Starting or stoping dish
+     * @param status
+     * @param id
+     */
+    @Transactional
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
+
+        // If a dish is stopped, the set meal with the dish should be stopped
+        if(status == StatusConstant.DISABLE){
+            ArrayList<Long> dishIds = new ArrayList<>();
+            dishIds.add(id);
+
+            List<Long> setmealIds = setMealDishMapper.getSetMealIdsByDishIds(dishIds);
+            if(setmealIds != null && setmealIds.size() > 0){
+                for(Long setmealId: setmealIds){
+                    Setmeal setmeal = Setmeal.builder()
+                            .id(setmealId)
+                            .status(StatusConstant.DISABLE)
+                            .build();
+                    setmealMapper.update(setmeal);
+                }
+            }
+        }
     }
 }

@@ -40,4 +40,11 @@ public interface SetmealService {
      * @param setmealDTO
      */
     void update(SetmealDTO setmealDTO);
+
+    /**
+     * Starting and stopping set meal
+     * @param status
+     * @param id
+     */
+    void startOrStop(Integer status, Long id);
 }
